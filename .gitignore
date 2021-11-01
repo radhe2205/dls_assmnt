@@ -1,0 +1,8 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+.idea/*
+*.DS_Store
+*saved_models*
+*data*
+*cleaned_audio*
