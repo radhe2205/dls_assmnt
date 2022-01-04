@@ -74,7 +74,7 @@ model_layers = [
 
 def change_paths_to_absolute(train_ops):
     if train_ops["dataset_type"] == "cifar500":
-        train_ops["batch_size"] = 1
+        train_ops["batch_size"] = 500
 
     path_frags = train_ops["model_path"].split("_")
     train_ops["model_path"] = "_".join(path_frags[:-3]) +"_"+ train_ops["dataset_type"] + "_" + train_ops["model_type"] + "_" + path_frags[-1]
@@ -438,8 +438,8 @@ def plot_epoch_stats(epoch_stat, label):
     plt.show()
 
 def plot_losses_n_acces(losses, acces):
-    plot_epoch_stats({d_type: losses[d_type]["val"] for d_type in losses}, "Loss vs epoch")
-    plot_epoch_stats({d_type: acces[d_type]["val"] for d_type in acces}, "Loss vs epoch")
+    plot_epoch_stats({d_type +"_"+ split: losses[d_type][split] for d_type in losses for split in ("val", "train")}, "Loss vs epoch")
+    plot_epoch_stats({d_type +"_"+ split: acces[d_type][split] for d_type in acces for split in ("val", "train")}, "Accuracy vs epoch")
 
 def train_cnn_models_all_data_types():
     base_cnn_train_options["epochs"] = 20
@@ -481,6 +481,10 @@ def train_cifar_models(dataset_type, model_type, epochs = 100, load_model = Fals
     change_paths_to_absolute(train_options)
     return train_cnn_model(train_options)
 
-train_cifar_models("cifar3", "cifar3", 10, load_model = True)
+# train_cifar_models("cifar3", "cifar3", 10, load_model = True)
 # train_cifar_models("cifar500", "cifar500", 1, load_model = True)
-train_cifar_models("cifar500", "transfer", 200, load_model = True)
+# train_cifar_models("cifar500", "transfer", 200, load_model = True)
+
+all_data, all_labels = unpickle_n_combine(base_cnn_train_options["data_files"])
+all_data = all_data/255
+plot_10x10_imgs(all_data, all_labels)

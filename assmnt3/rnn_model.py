@@ -47,7 +47,7 @@ def plot_signals(signals, labels):
     plt.show()
 
 rnn_train_options = {
-    "batch_size": 64,
+    "batch_size": 512,
     "load_model": False,
     "save_model": True,
     "lr_rate": 0.0005,
@@ -55,8 +55,8 @@ rnn_train_options = {
     "base_path": "",
     "num_layers": 2,
     "dataset_info": {
-        "train": {"num_samples": 2, "path": "data/audio-data/tr/tr{file_prefix}{0:04d}.wav"},
-        "val": {"num_samples": 2, "path": "data/audio-data/v/v{file_prefix}{0:04d}.wav"},
+        "train": {"num_samples": 1200, "path": "data/audio-data/tr/tr{file_prefix}{0:04d}.wav"},
+        "val": {"num_samples": 1200, "path": "data/audio-data/v/v{file_prefix}{0:04d}.wav"},
         "test": {"num_samples": 400, "path": "data/audio-data/te/te{file_prefix}{0:04d}.wav"}
     },
     "sequence_length": 10,
@@ -107,7 +107,7 @@ def load_model(model, model_path):
         if not os.path.exists(model_path):
             return model
 
-        model.load_state_dict(torch.load(model_path))
+        model.load_state_dict(torch.load(model_path, map_location=device))
         return model
     except Exception as e:
         traceback.print_exc(e)
@@ -337,21 +337,25 @@ def search_params(train_options):
         model, loss, snr = train_rnn_model(train_options)
         print("LR: " + str(train_options["lr_rate"]) + " SNRs: " + str(snr))
 
-rnn_train_options["epochs"] = 0
-rnn_train_options["load_model"] = True
+# rnn_train_options["epochs"] = 200
+#
+# model, x, y = train_rnn_model(rnn_train_options)
+# loader = get_dataloader(rnn_train_options, "test")
+#
+# save_model_output(model, loader, rnn_train_options["clean_data_path"])
+#
+
+#________________
+
+change_paths_to_absolute(rnn_train_options)
 rnn_train_options["train_model"] = False
-model, x, y = train_rnn_model(rnn_train_options)
-loader = get_dataloader(rnn_train_options, "test")
+rnn_train_options["load_model"] = True
+rnn_train_options["epochs"] = 0
+model, loss, snr = train_rnn_model(rnn_train_options)
 
-# snr, loss = calculate_model_loss_n_snr(model, loader)
-# print(snr)
+loader = get_dataloader(rnn_train_options, "val")
+# save_model_output(model, loader, rnn_train_options["clean_data_path"])
+snr, loss = calculate_model_loss_n_snr(model, loader)
+print(snr)
 
-# for threshold in (0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9):
-#     snr, loss = calculate_model_loss_n_snr(model, loader, True, threshold)
-#     print(str(threshold) + ": " + str(snr))
-
-save_model_output(model, loader, rnn_train_options["clean_data_path"])
-
-# search_params(rnn_train_options)
-
-# Check how many values in mask are correct >0.9 | >0.8.....
+print("Done.")
