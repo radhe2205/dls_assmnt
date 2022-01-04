@@ -7,10 +7,8 @@
 assmnt1/mnist/**
 **.model
 **.pyc
-*.ipynp
+**.ipynb
 **.html
 **.DS_Store
 .ipynb_checkpoints
-assmnt2/Untitled.ipynb
-
-
+**.zip
