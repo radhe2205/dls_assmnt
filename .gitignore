@@ -1,0 +1,16 @@
+# Default ignored files
+/workspace.xml
+.idea/*
+*saved_models/
+*data*
+*cleaned_audio/
+assmnt1/mnist/**
+**.model
+**.pyc
+*.ipynp
+**.html
+**.DS_Store
+.ipynb_checkpoints
+assmnt2/Untitled.ipynb
+
+
